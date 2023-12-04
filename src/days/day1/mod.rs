@@ -1,3 +1,5 @@
+mod tests;
+
 use crate::common::input_reader;
 pub struct Day1;
 
