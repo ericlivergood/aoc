@@ -1,4 +1,5 @@
 use std::fs;
+use array2d::{Array2D};
 
 pub struct InputReader;
 
@@ -9,5 +10,20 @@ impl InputReader {
 
         let split = contents.split("\n");
         split.map(|x| x.to_string()).collect()
+    }
+
+    pub fn to_2d_array(&self, lines: Vec<String>) -> Array2D<char> {
+        let mut rows = Vec::new();
+        for l in lines {
+            rows.push(l.chars().collect())
+        }
+
+        Array2D::from_rows(&rows)
+            .expect("unable to create 2d array")
+    }
+
+    pub fn get_as_2d_array(&self, file_name: &str) -> Array2D<char>{
+        let lines = self.get_lines(file_name);
+        self.to_2d_array(lines)
     }
 }
