@@ -1,3 +1,4 @@
+mod tests;
 use std::fs;
 use array2d::{Array2D};
 
@@ -12,10 +13,18 @@ impl InputReader {
         split.map(|x| x.to_string()).collect()
     }
 
+    /*
+           X 012
+           Y ___
+           0|123
+           1|456
+           2|789
+
+     */
     pub fn to_2d_array(&self, lines: Vec<String>) -> Array2D<char> {
         let mut rows = Vec::new();
         for l in lines {
-            rows.push(l.chars().collect())
+            rows.push(l.trim().chars().collect())
         }
 
         Array2D::from_rows(&rows)
