@@ -42,10 +42,46 @@ impl Schematic {
         val.is_digit(10)
     }
     pub fn is_symbol_at(&self, x: usize, y: usize) -> bool {
-        println!("{x},{y}");
         let val = self.data.get(y, x)
             .expect("unable to get element");
         is_symbol(val)
+    }
+
+    pub fn is_gear(&self, x: usize, y: usize) -> bool {
+        let val = self.data.get(y, x)
+            .expect("unable to get element");
+        val == '*'
+    }
+
+    pub fn is_adjacent_to_gear(&self, p: &PartNumber) -> bool {
+        let start_x = if p.x1 == 0 { 0 } else { p.x1 -1 };
+        let end_x = if p.x2 == self.data.row_len() - 1 { p.x2 } else { p.x2 + 1 };
+
+        if self.is_gear(start_x, p.y) {
+            return true;
+        }
+        if self.is_gear(end_x, p.y) {
+            return true;
+        }
+
+        if p.y > 0 {
+            for x in start_x..end_x+1 {
+                let y = p.y - 1;
+                if self.is_gear(x, y) {
+                    return true;
+                }
+            }
+        }
+
+        if p.y < self.data.column_len() - 1 {
+            for x in start_x..end_x+1 {
+                let y = p.y + 1;
+                if self.is_gear(x, y) {
+                    return true;
+                }
+            }
+        }
+        false
     }
 
     pub fn is_adjacent_to_symbol(&self, p: &PartNumber) -> bool {
@@ -60,7 +96,7 @@ impl Schematic {
         }
 
         if p.y > 0 {
-            for x in start_x..end_x {
+            for x in start_x..end_x+1 {
                 let y = p.y - 1;
                 if self.is_symbol_at(x, y) {
                     return true;
@@ -69,7 +105,7 @@ impl Schematic {
         }
 
         if p.y < self.data.column_len() - 1 {
-            for x in start_x..end_x {
+            for x in start_x..end_x+1 {
                 let y = p.y + 1;
                 if self.is_symbol_at(x, y) {
                     return true;
@@ -81,7 +117,6 @@ impl Schematic {
 
     pub fn get_part_numbers(&self) -> Vec<PartNumber> {
         let mut part_numbers = Vec::new();
-        let mut last_was_number = false;
         let mut current_part_number = PartNumber {
             x1: 0,
             x2: 0,
@@ -91,6 +126,7 @@ impl Schematic {
         let mut y = 0;
         for row in &self.data.as_rows() {
             let mut x: usize = 0;
+            let mut last_was_number = false;
             for c in row {
                 if c.is_digit(10) {
                     if last_was_number {
@@ -115,6 +151,9 @@ impl Schematic {
                 }
                 x += 1;
             }
+            if last_was_number {
+                part_numbers.push(current_part_number.clone());
+            }
             y += 1;
         }
 
@@ -128,7 +167,7 @@ impl Day {
     }
     fn run_part_one(&self) {
         let r = input_reader::InputReader;
-        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/test");
+        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/input    ");
         let schematic = Schematic {
             data
         };
@@ -143,5 +182,18 @@ impl Day {
     }
 
     fn run_part_two(&self) {
+        let r = input_reader::InputReader;
+        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/test");
+        let schematic = Schematic {
+            data
+        };
+        let parts = schematic.get_part_numbers();
+        let mut sum = 0;
+        for p in parts {
+            if schematic.is_adjacent_to_gear(&p) {
+                sum += p.as_number();
+            }
+        }
+        println!("{sum}");
     }
 }

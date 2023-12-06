@@ -47,7 +47,32 @@ mod tests {
     fn identifies_part_is_adjacent_to_symbol_on_line_above() {
         let mut lines = Vec::new();
         lines.push(String::from("&....&....&....&&..."));
-        lines.push(String::from(".12..34..45..67..u.89"));
+        lines.push(String::from(".12..34..45..67...89"));
+        let i = InputReader;
+        let data = i.to_2d_array(lines);
+
+        let s = Schematic {
+            data
+        };
+
+        let parts = s.get_part_numbers();
+        let part12 = parts.iter().filter(|x| x.value == "12").next().unwrap();
+        let part34 = parts.iter().filter(|x| x.value == "34").next().unwrap();
+        let part45 = parts.iter().filter(|x| x.value == "45").next().unwrap();
+        let part67 = parts.iter().filter(|x| x.value == "67").next().unwrap();
+        let part89 = parts.iter().filter(|x| x.value == "89").next().unwrap();
+        assert_eq!(s.is_adjacent_to_symbol(&part12), true);
+        assert_eq!(s.is_adjacent_to_symbol(&part34), true);
+        assert_eq!(s.is_adjacent_to_symbol(&part45), true);
+        assert_eq!(s.is_adjacent_to_symbol(&part67), true);
+        assert_eq!(s.is_adjacent_to_symbol(&part89), false);
+    }
+
+    #[test]
+    fn identifies_part_is_adjacent_to_symbol_on_line_below() {
+        let mut lines = Vec::new();
+        lines.push(String::from(".12..34..45..67...89"));
+        lines.push(String::from("&....&....&....&&..."));
         let i = InputReader;
         let data = i.to_2d_array(lines);
 
