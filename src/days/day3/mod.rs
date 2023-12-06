@@ -1,3 +1,4 @@
+use std::ops::Range;
 use array2d::Array2D;
 use crate::common::input_reader;
 
@@ -20,6 +21,12 @@ impl PartNumber {
     pub fn as_number(&self) -> u32 {
         self.value.parse::<u32>()
             .expect("could not parse number.")
+    }
+
+    pub fn x_adjacency_range(&self, max_x: usize) -> Range<usize> {
+        let start = if self.x1 == 0 { 0 } else { self.x1 - 1 };
+        let end = if self.x2 == max_x { self.x2 } else { self.x2 + 1 };
+        start..end
     }
 }
 
@@ -47,10 +54,28 @@ impl Schematic {
         is_symbol(val)
     }
 
+    pub fn get_part_numbers_adjacent_to(&self, x: usize, y: usize) -> Vec<PartNumber> {
+        let mut adjacents = Vec::new();
+        for part in self.get_part_numbers() {
+            let x_range = part.x_adjacency_range(self.data.row_len());
+            if (y > 0 && part.y == y - 1) || (part.y == y + 1) || (part.y == y) {
+                if x >= x_range.start && x <= x_range.end {
+                    adjacents.push(part);
+                }
+            }
+        }
+        adjacents
+    }
+
     pub fn is_gear(&self, x: usize, y: usize) -> bool {
         let val = self.data.get(y, x)
             .expect("unable to get element");
-        val == '*'
+        if val != &'*' {
+            return false;
+        }
+
+        let adjacent_parts = self.get_part_numbers_adjacent_to(x, y);
+        adjacent_parts.len() == 2
     }
 
     pub fn is_adjacent_to_gear(&self, p: &PartNumber) -> bool {
@@ -163,11 +188,11 @@ impl Schematic {
 
 impl Day {
     pub fn run(&self) {
-        self.run_part_one();
+        self.run_part_two();
     }
     fn run_part_one(&self) {
         let r = input_reader::InputReader;
-        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/input    ");
+        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/input");
         let schematic = Schematic {
             data
         };
@@ -183,15 +208,19 @@ impl Day {
 
     fn run_part_two(&self) {
         let r = input_reader::InputReader;
-        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/test");
+        let data = r.get_as_2d_array("/git/aoc23/src/days/day3/input");
         let schematic = Schematic {
             data
         };
-        let parts = schematic.get_part_numbers();
+
         let mut sum = 0;
-        for p in parts {
-            if schematic.is_adjacent_to_gear(&p) {
-                sum += p.as_number();
+
+        for x in 0..schematic.data.row_len() {
+            for y in 0..schematic.data.column_len() {
+                if schematic.is_gear(x, y) {
+                    let parts = schematic.get_part_numbers_adjacent_to(x,y);
+                    sum += parts[0].as_number()*parts[1].as_number();
+                }
             }
         }
         println!("{sum}");

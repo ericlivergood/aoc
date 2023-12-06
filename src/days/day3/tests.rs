@@ -92,4 +92,53 @@ mod tests {
         assert_eq!(s.is_adjacent_to_symbol(&part67), true);
         assert_eq!(s.is_adjacent_to_symbol(&part89), false);
     }
+    #[test]
+    fn identifies_gear() {
+        let mut lines = Vec::new();
+        lines.push(String::from("1...1...1."));
+        lines.push(String::from("*..1*...*."));
+        lines.push(String::from("1...1.*..."));
+        let i = InputReader;
+        let data = i.to_2d_array(lines);
+
+        let s = Schematic {
+            data
+        };
+
+        assert_eq!(s.is_gear(0,0), false);
+        assert_eq!(s.is_gear(1,0), false);
+        assert_eq!(s.is_gear(0,1), true);
+        assert_eq!(s.is_gear(4,1), false);
+        assert_eq!(s.is_gear(8,1), false);
+        assert_eq!(s.is_gear(6,2), false);
+    }
+
+    #[test]
+    fn gets_adjacent_part_numbers() {
+        let mut lines = Vec::new();
+        lines.push(String::from("1...2...3."));
+        lines.push(String::from("*..4*...*."));
+        lines.push(String::from("5...6.*..."));
+        let i = InputReader;
+        let data = i.to_2d_array(lines);
+
+        let s = Schematic {
+            data
+        };
+
+        let star01adjacents = s.get_part_numbers_adjacent_to(0, 1);
+        assert_eq!(star01adjacents.len(), 2);
+
+
+        let star41adjacents = s.get_part_numbers_adjacent_to(4, 1);
+        assert_eq!(star41adjacents.len(), 3);
+
+
+        let star81adjacents = s.get_part_numbers_adjacent_to(8, 1);
+        assert_eq!(star81adjacents.len(), 1);
+
+
+        let star62adjacents = s.get_part_numbers_adjacent_to(6, 2);
+        assert_eq!(star62adjacents.len(), 0);
+    }
 }
