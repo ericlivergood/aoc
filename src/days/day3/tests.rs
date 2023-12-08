@@ -7,7 +7,7 @@ mod tests {
     fn gets_part_numbers() {
         let mut lines = Vec::new();
         lines.push(String::from("123....456"));
-        lines.push(String::from("...78....."));;
+        lines.push(String::from("...78....."));
         let i = InputReader;
         let data = i.to_2d_array(lines);
 

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::days::day1::{combine_digits, Day1, get_first_digit, get_last_digit};
+    use crate::days::day1::{combine_digits, get_first_digit, get_last_digit};
 
     #[test]
     fn combines_digits() {
