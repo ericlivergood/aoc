@@ -1,14 +1,16 @@
 use std::cmp::Ordering;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
-use std::fmt::{Display, Formatter};
+use std::fmt;
 use crate::common::input_reader;
 
 mod tests;
 pub struct Day;
 
+const IS_PART_TWO: bool = true;
 
 pub struct Hand {
+    str: String,
     //cards: Vec<i32>,
     card1: i32,
     card2: i32,
@@ -18,7 +20,7 @@ pub struct Hand {
     bid: i32
 }
 
-#[derive(PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Debug)]
 pub enum HandType {
     HighCard,
     Pair,
@@ -27,6 +29,20 @@ pub enum HandType {
     FullHouse,
     FourOfAKind,
     FiveOfAKind
+}
+
+impl fmt::Display for HandType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            HandType::HighCard => write!(f, "High Card"),
+            HandType::Pair => write!(f, "Pair"),
+            HandType::TwoPair => write!(f, "Two Pair"),
+            HandType::ThreeOfAKind => write!(f, "Three of a Kind"),
+            HandType::FullHouse => write!(f, "Full House"),
+            HandType::FourOfAKind => write!(f, "Four of a Kind"),
+            HandType::FiveOfAKind => write!(f, "Five of a Kind")
+        }
+    }
 }
 
 lazy_static! {
@@ -41,7 +57,12 @@ lazy_static! {
         map.insert('8', 8);
         map.insert('9', 9);
         map.insert('T', 10);
-        map.insert('J', 11);
+        if IS_PART_TWO {
+            map.insert('J', 1);
+        }
+        else {
+            map.insert('J', 11);
+        }
         map.insert('Q', 12);
         map.insert('K', 13);
         map.insert('A', 14);
@@ -52,6 +73,7 @@ impl Hand {
     pub fn new(data: String) -> Self {
         let parts = data.split(' ').collect::<Vec<&str>>();
         let bid = parts[1].trim().parse::<i32>().unwrap();
+        let str = parts[0].trim().to_string();
         let cards = parts[0].trim().chars().collect::<Vec<char>>();
         let card1 = CARDS[&cards[0]];
         let card2 = CARDS[&cards[1]];
@@ -60,6 +82,7 @@ impl Hand {
         let card5 = CARDS[&cards[4]];
 
         Self {
+            str,
             bid,
             card1,
             card2,
@@ -110,6 +133,9 @@ impl Hand {
             Some(n) => { hash.insert(self.card5, n+1); }
             None => { hash.insert(self.card5, 1); }
         }
+        if IS_PART_TWO {
+            hash.remove(&1);
+        }
         hash
     }
 
@@ -123,9 +149,27 @@ impl Hand {
 
         HandType::HighCard
     }
+
+    pub fn joker_count(&self) -> i32 {
+        self.count_of_card(1)
+    }
+
     pub fn is_five_of_kind(&self) -> bool {
         let counts = self.get_card_counts();
-        counts.values().collect::<Vec<&i32>>()[0] == &5
+        let mut values = counts.values().collect::<Vec<&i32>>();
+        values.sort();
+        values.reverse();
+
+        match IS_PART_TWO {
+            false => values[0] == &5,
+            true => {
+                self.joker_count() >= 4 ||
+                values[0] == &5 ||
+                (values[0] == &4 && self.joker_count() == 1) ||
+                (values[0] == &3 && self.joker_count() == 2) ||
+                (values[0] == &2 && self.joker_count() == 3)
+            }
+        }
     }
 
     pub fn is_four_of_kind(&self) -> bool {
@@ -136,7 +180,16 @@ impl Hand {
 
         counts.sort();
         counts.reverse();
-        counts[0] == &4
+
+        match IS_PART_TWO {
+            false => counts[0] == &4,
+            true => {
+                counts[0] == &4 ||
+                    (counts[0] == &3 && self.joker_count() >= 1) ||
+                    (counts[0] == &2 && self.joker_count() >= 2) ||
+                    self.joker_count() >= 3
+            }
+        }
     }
 
     pub fn is_full_house(&self) -> bool {
@@ -147,7 +200,14 @@ impl Hand {
 
         counts.sort();
         counts.reverse();
-        counts[0] == &3 && counts[1] == &2
+
+        match IS_PART_TWO {
+            false => counts[0] == &3 && counts[1] == &2,
+            true => {
+                (counts[0] == &3 && counts[1] == &2) ||
+                    (counts[0] == &2 && counts[1] == &2 && self.joker_count() == 1)
+            }
+        }
     }
 
     pub fn is_three_of_a_kind(&self) -> bool {
@@ -158,7 +218,14 @@ impl Hand {
 
         counts.sort();
         counts.reverse();
-        counts[0] == &3
+        match IS_PART_TWO {
+            false => counts[0] == &3,
+            true => {
+                counts[0] == &3 ||
+                    (counts[0] == &2 && self.joker_count() >= 1) ||
+                    (self.joker_count() >= 2)
+            }
+        }
     }
 
     pub fn is_two_pair(&self) -> bool {
@@ -169,7 +236,14 @@ impl Hand {
 
         counts.sort();
         counts.reverse();
-        counts[0] == &2 && counts[1] == &2
+        match IS_PART_TWO {
+            false => counts[0] == &2 && counts[1] == &2,
+            true => {
+                (counts[0] == &2 && counts[1] == &2) ||
+                    (counts[0] == &2 && self.joker_count() > 0) ||
+                    self.joker_count() > 1
+            }
+        }
     }
 
     pub fn is_pair(&self) -> bool {
@@ -180,7 +254,12 @@ impl Hand {
 
         counts.sort();
         counts.reverse();
-        counts[0] == &2
+        match IS_PART_TWO {
+            false => counts[0] == &2,
+            true => {
+                counts[0] == &2 || self.joker_count() > 0
+            }
+        }
     }
 }
 
@@ -237,11 +316,18 @@ impl Day {
         let mut n = 1;
 
         for h in hands {
-            println!("n: {n} | bid: {0}", h.bid);
+            if h.str.contains("J") && h.get_hand_type() == HandType::ThreeOfAKind {
+                println!("n: {n} | hand: {0} | bid: {1} | kind: {2}", h.str, h.bid, h.get_hand_type());
+            }
             answer += h.bid * n;
             n += 1;
         }
 
         println!("{answer}");
+
+        /*
+        1209 250758894
+
+         */
     }
 }
