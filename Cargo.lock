@@ -7,6 +7,7 @@ name = "aoc23"
 version = "0.1.0"
 dependencies = [
  "array2d",
+ "lazy_static",
 ]
 
 [[package]]
@@ -14,3 +15,9 @@ name = "array2d"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79093d31d0a9c7832c71ad74dd945b7861f721e6f242aa67be253a5eecbac937"
+
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"

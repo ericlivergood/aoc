@@ -5,12 +5,14 @@ mod days {
     pub mod day3;
     pub mod day4;
     pub mod day5;
+    pub mod day6;
+    pub mod day7;
 }
 mod common {
     pub mod input_reader;
 }
 
 fn main() {
-    let day = days::day5::Day;
+    let day = days::day7::Day;
     day.run();
 }
