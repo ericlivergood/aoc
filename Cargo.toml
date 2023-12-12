@@ -9,4 +9,5 @@ edition = "2021"
 array2d = "0.3.0"
 lazy_static = "1.4.0"
 regex = "1.10.2"
+num-integer = "0.1.45"
 
