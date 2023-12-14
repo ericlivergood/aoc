@@ -1,6 +1,4 @@
 use std::collections::HashSet;
-use crate::days::day8::direction::Direction;
-
 pub struct Path {
     pub(crate) cycle_length: i64,
     pub(crate) z_locations: Vec<i64>,
@@ -29,7 +27,7 @@ impl Path {
         }
     }
 
-    pub fn next(&mut self, n: String, d: Direction) {
+    pub fn next(&mut self, n: String) {
         if self.complete {
             return;
         }

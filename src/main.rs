@@ -13,6 +13,8 @@ mod days {
     pub mod day9;
     pub mod day10;
     pub mod day11;
+    pub mod day12;
+    pub mod day13;
 }
 mod common {
     pub mod input_reader;
@@ -21,6 +23,6 @@ mod common {
 
 
 fn main() {
-    let day = days::day8::Day;
+    let day = days::day13::Day;
     day.run();
 }

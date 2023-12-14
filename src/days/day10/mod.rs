@@ -10,7 +10,7 @@ pub struct Day;
 
 impl Day {
     pub fn run(&self) {
-        self.run_part_one();
+        self.run_part_two();
     }
     pub fn run_part_one(&self) {
         let reader = input_reader::InputReader;
@@ -24,21 +24,29 @@ impl Day {
 
     pub fn run_part_two(&self) {
         let reader = input_reader::InputReader;
-        let lines = reader.get_lines("/git/aoc23/src/days/day10/test");
+        let lines = reader.get_lines("/git/aoc23/src/days/day10/input");
 
         println!("building map");
         let map = PipeMap::new(lines);
 
         println!("map built, finding inside points");
         let mut inside = 0;
+
+        // for p in &map.pipe_loop {
+        //     println!("{p}");
+        // }
+        // map.is_inside_loop(Point::new(2,2));
+
         for x in 0..map.max_x {
             for y in 0..map.max_y {
+                println!("checking {x},{y}");
                 if map.is_inside_loop(Point::new(x, y)) {
-                    println!("{x}, {y}");
+                    //println!("{x}, {y}");
                     inside += 1;
                 }
             }
         }
+        println!("{map}");
         println!("{inside}");
     }
 }

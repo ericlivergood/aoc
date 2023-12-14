@@ -18,11 +18,12 @@ impl Display for PipeMap {
 
                 if pipe.is_some() {
                     write!(f, "{0}", pipe.unwrap().shape).unwrap();
-                }else if self.is_inside_loop(point) {
+                }
+                else if self.is_inside_loop(point) {
                     write!(f, "I").unwrap();
                 }
                 else {
-                    write!(f, ".").unwrap();
+                    write!(f, "O").unwrap();
                 }
             }
             write!(f, "\n").unwrap();
@@ -74,6 +75,8 @@ impl PipeMap {
 
             current = map_pipes.iter().find(|p| p.point == next).unwrap();
             if current.is_connected_to(start) {
+                path.push(current.point);
+                pipe_loop.push(current.clone());
                 break;
             }
         }
@@ -116,20 +119,52 @@ impl PipeMap {
         }
         false
     }
-
     pub fn is_inside_loop(&self, p: Point) -> bool {
-        for pipe in &self.pipe_loop {
-            // if pipe.point == p {
-            //     return false;
-            // }
-            if self.path_exists(Point::new(0,0), p) {
-                println!("path exists from 0,0 to {p}");
-                return false;
-            }
-            else{
-                println!("path does not exist from 0,0 to {p}");
+        let mut count = 0;
+        for x in 0..p.x {
+            let point = Point::new(x, p.y);
+            //println!("checking {point}: ");
+            if self.pipe_loop.iter().any(|p| p.point == point) {
+                count += 1;
             }
         }
+        if count % 2 == 0 {
+            return false;
+        }
+
+        count = 0;
+        for x in p.x+1..self.max_x+1 {
+            let point = Point::new(x, p.y);
+            if self.pipe_loop.iter().any(|p| p.point == point) {
+                count += 1;
+            }
+        }
+        if count % 2 == 0 {
+            return false;
+        }
+
+        count = 0;
+        for y in 0..p.y {
+            let point = Point::new(p.x, y);
+            if self.pipe_loop.iter().any(|p| p.point == point) {
+                count += 1;
+            }
+        }
+        if count % 2 == 0 {
+            return false;
+        }
+
+        count = 0;
+        for y in p.y+1..self.max_y+1 {
+            let point = Point::new(p.x, y);
+            if self.pipe_loop.iter().any(|p| p.point == point) {
+                count += 1;
+            }
+        }
+        if count % 2 == 0 {
+            return false;
+        }
+
         true
     }
 }

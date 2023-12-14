@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
+    use crate::common::point::Point;
     use crate::days::day10::pipe::Pipe;
-    use crate::days::day10::point::Point;
 
     #[test]
     fn point_equality() {

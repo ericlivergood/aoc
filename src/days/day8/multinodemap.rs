@@ -36,7 +36,7 @@ impl MultiNodeMap {
                 Direction::Right => &current_node.right
             };
             //println!("{2} {3}: ({0},{1}) -> {next}", &current_node.left, &current_node.right, &current_node.name, d);
-            c.next(next.clone(), d);
+            c.next(next.clone());
         }
     }
 

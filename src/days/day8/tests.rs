@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::days::day8::Node;
+    use crate::days::day8::node::Node;
 
     #[test]
     fn builds_node() {
