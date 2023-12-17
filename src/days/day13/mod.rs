@@ -30,7 +30,7 @@ impl Day {
             let n = p.summarize(fix_smudge);
 
             sum += n;
-            pattern = Vec::new();
+            //pattern = Vec::new();
         }
 
         println!("{sum}");

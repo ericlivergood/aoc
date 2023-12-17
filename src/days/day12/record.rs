@@ -79,8 +79,7 @@ impl Record {
     }
 
     pub fn count_solutions(&self) -> i64 {
-        let mut numbers = self.condition_numbers.clone();
-        let mut current = numbers.pop().unwrap();
+        //let mut numbers = self.condition_numbers.clone();
         let mut current_run = 0;
         let mut options = Vec::new();
 

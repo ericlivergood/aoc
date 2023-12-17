@@ -1,5 +1,5 @@
 use crate::common::input_reader;
-use crate::days::day12::record::{generate_permutations, Record};
+use crate::days::day12::record::{Record};
 
 mod tests;
 mod record;

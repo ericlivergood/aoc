@@ -1,4 +1,3 @@
-use std::ffi::c_char;
 use std::fmt::{Display, Formatter};
 use array2d::Array2D;
 
@@ -12,7 +11,7 @@ impl Display for Pattern {
             for c in row {
                 write!(f, "{c}").unwrap();
             }
-            writeln!(f);
+            writeln!(f).unwrap();
         }
         writeln!(f)
     }
@@ -150,7 +149,7 @@ impl Pattern {
         let mut h = self.find_horizontal_reflection_line();
         //println!("{self}");
 
-        if(fix_smudge) {
+        if fix_smudge {
             let orig_v = v;
             let orig_h = h;
             self.fix_smudge();
