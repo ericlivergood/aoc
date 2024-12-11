@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use aoc2024::common::utils::utils::{list_to_i64_by_char};
 
 pub struct StoneLine {
@@ -31,7 +31,7 @@ impl StoneLine {
         StoneLine::new(stones)
     }
 
-    fn evolve_stone(&mut self, n: i64, times: i32) -> Vec<i64>{
+    fn evolve_stone(&mut self, n: i64) -> Vec<i64>{
         if self.mappings.contains_key(&n) {
             return self.mappings[&n].clone();
         }
@@ -52,7 +52,7 @@ impl StoneLine {
         let stones = self.stones.clone();
         let mut new_stones = Vec::new();
         for s in stones {
-            let next = self.evolve_stone(s, 1);
+            let next = self.evolve_stone(s);
             new_stones.extend(next);
         }
         self.stones = new_stones;
@@ -60,8 +60,7 @@ impl StoneLine {
 
     pub fn blink(&mut self, times: i64) {
         for i in 0..times {
-            let distinct: HashSet<_> = self.stones.clone().into_iter().collect();
-            println!("{}: {}, {}", i, self.stones.len(), distinct.len());
+            println!("{}: {}", i, self.stones.len());
             self.blink_once();
         }
     }
