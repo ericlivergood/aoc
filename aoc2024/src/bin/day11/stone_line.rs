@@ -64,6 +64,29 @@ impl StoneLine {
             self.blink_once();
         }
     }
+
+    pub fn get_blink_counts(&mut self, blinks: i32) -> i64 {
+        let mut current = HashMap::new();
+        for i in self.stones.clone() {
+            *current.entry(i).or_insert(0) += 1;
+        }
+
+        for i in 0..blinks {
+            let last = current.clone();
+            current = HashMap::new();
+
+            for s in last.keys() {
+                let s_count = *last.get(s).unwrap();
+                let evolved = self.evolve_stone(*s);
+                for n in evolved {
+                    *current.entry(n).or_insert(0) += s_count;
+                }
+            }
+            println!("{}: {}, {:?} | {}", i, current.len(), current.keys(), current.values().sum::<i64>());
+        }
+
+        current.values().sum::<i64>()
+    }
 }
 
 #[cfg(test)]
