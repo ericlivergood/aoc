@@ -70,6 +70,9 @@ if __name__ == "__main__":
 - Don't use obscure Python tricks without explaining them
 - Don't just give me the answer - help me understand the approach
 - Don't assume I want to golf the code (unless I specifically ask)
+- When I ask a question, do not make changes to any files unless explicitly asked to do so
+- When I ask a question don't ask me what I'm trying to do with the question I asked.
+- When I ask a question don't provide me examples related to the current code unless I ask for them
 
 ## Communication Preferences
 - Explain algorithmic complexity when it matters (O(n) vs O(n²) etc)
